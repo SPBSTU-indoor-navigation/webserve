@@ -1,0 +1,28 @@
+{
+  "name": "polymap-webserve",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "app/index.js",
+  "scripts": {
+    "serve": "cross-env NODE_ENV=development nodemon app/index.js",
+    "start": "cross-env NODE_ENV=production node app/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SPBSTU-indoor-navigation/webserve.git"
+  },
+  "author": "Soprachev Andrei",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SPBSTU-indoor-navigation/webserve/issues"
+  },
+  "homepage": "https://github.com/SPBSTU-indoor-navigation/webserve#readme",
+  "dependencies": {
+    "config": "^3.3.7",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "express": "^4.17.2",
+    "nodemon": "^2.0.15"
+  }
+}
