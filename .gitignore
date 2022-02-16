@@ -130,4 +130,4 @@ dist
 .pnp.*
 
 # Config
-/config/production.json
+config/production.json
