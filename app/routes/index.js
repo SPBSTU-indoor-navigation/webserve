@@ -11,4 +11,14 @@ router.get('/', (req, res) => {
     )
 })
 
+
+router.get('/.well-known/apple-app-site-association', (req, res) => {
+    res.json(
+        {
+            appclips: {
+                apps: ["LZP5UN7552.com.soprachev.polymap.clip"]
+            }
+        }
+    )
+})
 export default router
