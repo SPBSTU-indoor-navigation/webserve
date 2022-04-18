@@ -131,4 +131,5 @@ dist
 
 # Config
 config/production.json
+config/development.json
 config/dev.json

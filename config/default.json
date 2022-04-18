@@ -1,3 +1,5 @@
 {
-    "appPort": 11000
+    "appPort": 11000,
+    "baseUrl": "https://polymap.ru",
+    "mongo-URL-serve": ""
 }

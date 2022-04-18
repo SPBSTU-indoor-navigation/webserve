@@ -1,6 +1,9 @@
 import Router from 'express'
+import appClip from './appClip.js'
 
 const router = Router()
+
+router.use('/api', appClip)
 
 router.get('/', (req, res) => {
     res.json(
