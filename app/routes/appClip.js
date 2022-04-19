@@ -107,7 +107,7 @@ router.get('/appclip-code',
     query('secondary').isHexColor().optional({ nullable: true }),
     query('badgeTextColor').isHexColor().optional({ nullable: true }),
     query('logo').isIn(['camera', 'phone']).optional({ nullable: true }),
-    query('useBadge').isBoolean().optional({ nullable: true }),
+    query('useBadge').isBoolean().toBoolean().optional({ nullable: true }),
     query('type').isIn(['svg', 'png']).optional({ nullable: true }),
     async (req, res) => {
         const q = req.query
