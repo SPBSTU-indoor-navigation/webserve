@@ -152,7 +152,7 @@ router.get('/appclip-code',
 router.post('/generate',
     body('from').isUUID(),
     body('to').isUUID(),
-    body('helloText').isString().isLength({ max: 5 }).optional({ nullable: true }),
+    body('helloText').isString().isLength({ max: 5000 }).optional({ nullable: true }),
     body('codeVariant').isIn(['qr', 'appclip']),
     async (req, res) => {
         const errors = validationResult(req);
