@@ -1,7 +1,7 @@
 import Router from 'express'
 import appDB from '../db/index.js'
 import { parseStringPromise, Builder } from 'xml2js'
-import { query, body, validationResult } from 'express-validator'
+import { query, body, validationResult, param } from 'express-validator'
 import fs from 'fs'
 import sharp from 'sharp'
 import { promisify } from 'util';
@@ -149,12 +149,18 @@ router.get('/appclip-code',
         }
     })
 
-router.post('/gen',
+router.post('/generate',
     body('from').isUUID(),
     body('to').isUUID(),
     body('helloText').isString().isLength({ max: 5 }).optional({ nullable: true }),
     body('codeVariant').isIn(['qr', 'appclip']),
     async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+
         const { from, to, helloText, codeVariant } = req.body
 
         if (codeVariant == 'appclip') {
@@ -173,16 +179,37 @@ router.post('/gen',
                 appClipURL: appClipID
             })
 
-            // await sharedRoute.save()
+            await sharedRoute.save()
 
             return res.json({
                 appClipID,
-                url: config.get('baseUrl'),
+                base: config.get('baseUrl'),
+                codeUrl: `${config.get('baseUrl')}/api/l/${appClipID}`
             })
         } else {
 
             return res.status(400).json({ error: 'qr unsupported' })
         }
     })
+
+router.get('/l/:id', param('id').isNumeric(), async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const id = req.params.id
+    let route = await SharedRoute.findOne({ appClipURL: id })
+
+    if (!route) {
+        return res.status(400).json({ error: 'appclip_not_found' })
+    }
+
+    return res.json({
+        from: route.from,
+        to: route.to,
+        helloText: route.helloText,
+    })
+})
 
 export default router

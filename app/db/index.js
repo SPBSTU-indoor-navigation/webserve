@@ -14,6 +14,7 @@ const SharedRoute = new mongoose.Schema({
     appClipURL: String,
 })
 
+
 appDB.model("sharedRoute", SharedRoute);
 
 export default appDB
