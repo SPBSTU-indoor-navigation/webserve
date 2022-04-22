@@ -91,7 +91,7 @@ async function calculateAppClips() {
     ]))[0]?.count || 0
 }
 
-router.get('/api/generator/status', async (req, res) => {
+router.get('/generator/status', async (req, res) => {
     const count = await calculateAppClips()
     const exist = checkAppClipExist((count + 1) || 1)
     res.json({
@@ -100,7 +100,7 @@ router.get('/api/generator/status', async (req, res) => {
     })
 })
 
-router.get('/api/appclip-code',
+router.get('/appclip-code',
     query('id').isNumeric(),
     query('background').isHexColor().optional({ nullable: true }),
     query('primary').isHexColor().optional({ nullable: true }),
@@ -150,7 +150,7 @@ router.get('/api/appclip-code',
         }
     })
 
-router.post('/api/generate',
+router.post('/generate',
     body('from').isUUID(),
     body('to').isUUID(),
     body('helloText').isString().isLength({ max: 5000 }).optional({ nullable: true }),
@@ -185,7 +185,7 @@ router.post('/api/generate',
             return res.json({
                 appClipID,
                 base: config.get('baseUrl'),
-                codeUrl: `${config.get('baseUrl')}/api/l/${appClipID}`
+                codeUrl: `${config.get('baseUrl')}/l/${appClipID}`
             })
         } else {
 
@@ -193,7 +193,7 @@ router.post('/api/generate',
         }
     })
 
-router.get('/l/:id', param('id').isNumeric(), async (req, res) => {
+router.get('/load/:id', param('id').exists(), async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });

@@ -3,9 +3,9 @@ import appClip from './appClip.js'
 
 const router = Router()
 
-router.use('/', appClip)
+router.use('/api', appClip)
 
-router.get('/', (req, res) => {
+router.get('/api', (req, res) => {
     res.json(
         {
             status: 'online',
