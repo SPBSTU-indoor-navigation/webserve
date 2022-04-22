@@ -91,7 +91,7 @@ async function calculateAppClips() {
     ]))[0]?.count || 0
 }
 
-router.get('/generator/status', async (req, res) => {
+router.get('/api/generator/status', async (req, res) => {
     const count = await calculateAppClips()
     const exist = checkAppClipExist((count + 1) || 1)
     res.json({
@@ -100,7 +100,7 @@ router.get('/generator/status', async (req, res) => {
     })
 })
 
-router.get('/appclip-code',
+router.get('/api/appclip-code',
     query('id').isNumeric(),
     query('background').isHexColor().optional({ nullable: true }),
     query('primary').isHexColor().optional({ nullable: true }),
@@ -108,6 +108,7 @@ router.get('/appclip-code',
     query('badgeTextColor').isHexColor().optional({ nullable: true }),
     query('logo').isIn(['camera', 'phone']).optional({ nullable: true }),
     query('useBadge').isBoolean().toBoolean().optional({ nullable: true }),
+    query('width').isInt({ min: 32, max: 2048 }).toInt().optional({ nullable: true }),
     query('type').isIn(['svg', 'png']).optional({ nullable: true }),
     async (req, res) => {
         const q = req.query
@@ -140,7 +141,7 @@ router.get('/appclip-code',
             res.send(svg)
         } else {
             const png = await sharp(Buffer.from(svg))
-                .resize({ width: 2000 })
+                .resize({ width: q.width || 1024 })
                 .png()
                 .toBuffer()
             res.attachment('appclip.png')
@@ -149,7 +150,7 @@ router.get('/appclip-code',
         }
     })
 
-router.post('/generate',
+router.post('/api/generate',
     body('from').isUUID(),
     body('to').isUUID(),
     body('helloText').isString().isLength({ max: 5000 }).optional({ nullable: true }),

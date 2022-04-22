@@ -1,6 +1,10 @@
 name: Deploy Production
 
 on:
+    push:
+        branches:
+            - main
+
     release:
         types: [published, created, edited]
 

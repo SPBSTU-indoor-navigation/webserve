@@ -3,7 +3,7 @@ import appClip from './appClip.js'
 
 const router = Router()
 
-router.use('/api', appClip)
+router.use('/', appClip)
 
 router.get('/', (req, res) => {
     res.json(
@@ -23,7 +23,7 @@ router.get('/.well-known/apple-app-site-association', (req, res) => {
                 details: [
                     {
                         appID: 'LZP5UN7552.com.soprachev.polymap',
-                        paths: ['*']
+                        paths: ['/l/*']
                     }
                 ]
             },

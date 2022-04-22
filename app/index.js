@@ -13,7 +13,6 @@ app.use(cors());
 app.options('*', cors());
 
 app.use('/', routes)
-// app.use('/api', appClip)
 
 async function Start() {
     const port = config.get('appPort') || 5000
