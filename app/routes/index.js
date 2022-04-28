@@ -28,7 +28,10 @@ router.get('/.well-known/apple-app-site-association', (req, res) => {
                 ]
             },
             appclips: {
-                apps: ["LZP5UN7552.com.soprachev.polymap.clip"]
+                apps: [
+                    "LZP5UN7552.com.soprachev.polymap.clip",
+                    "LZP5UN7552.com.soprachev.polymap"
+                ]
             }
         }
     )
