@@ -5,6 +5,9 @@ const appDB = mongoose.connection.useDb('polymap');
 const SharedRoute = new mongoose.Schema({
     from: String,
     to: String,
+    asphalt: Boolean,
+    serviceRoute: Boolean,
+    allowParameterChange: Boolean,
     codeType: {
         type: String,
         enum: ['qr', 'appclip'],

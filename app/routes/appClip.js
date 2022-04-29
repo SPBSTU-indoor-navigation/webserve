@@ -155,14 +155,16 @@ router.post('/generate',
     body('to').isUUID(),
     body('helloText').isString().isLength({ max: 5000 }).optional({ nullable: true }),
     body('codeVariant').isIn(['qr', 'appclip']),
+    body('asphalt').isBoolean().toBoolean().optional({ nullable: true }),
+    body('serviceRoute').isBoolean().toBoolean().optional({ nullable: true }),
+    body('allowParameterChange').isBoolean().toBoolean().optional({ nullable: true }),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
 
-
-        const { from, to, helloText, codeVariant } = req.body
+        const { from, to, helloText, codeVariant, asphalt, serviceRoute, allowParameterChange } = req.body
 
         if (codeVariant == 'appclip') {
 
@@ -177,7 +179,10 @@ router.post('/generate',
                 to: to,
                 helloText: helloText || "",
                 codeVariant: 'appclip',
-                appClipURL: appClipID
+                appClipURL: appClipID,
+                asphalt: asphalt || false,
+                serviceRoute: serviceRoute || false,
+                allowParameterChange: allowParameterChange || false,
             })
 
             await sharedRoute.save()
@@ -210,6 +215,9 @@ router.get('/load/:id', param('id').exists(), async (req, res) => {
         from: route.from,
         to: route.to,
         helloText: route.helloText,
+        asphalt: route.asphalt,
+        serviceRoute: route.serviceRoute,
+        allowParameterChange: route.allowParameterChange
     })
 })
 
