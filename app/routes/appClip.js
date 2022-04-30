@@ -96,7 +96,8 @@ router.get('/generator/status', async (req, res) => {
     const exist = checkAppClipExist((count + 1) || 1)
     res.json({
         status: 'online',
-        appclip: exist
+        appclip: exist,
+        qr: true
     })
 })
 
