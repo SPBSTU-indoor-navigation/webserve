@@ -14,7 +14,7 @@ const SharedRoute = new mongoose.Schema({
         default: 'appclip'
     },
     helloText: String,
-    appClipURL: String,
+    codeID: String,
 })
 
 

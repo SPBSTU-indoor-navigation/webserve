@@ -1,7 +1,7 @@
 import Router from 'express'
-import appDB from '../db/index.js'
+import appDB from '../../db/index.js'
 import { parseStringPromise, Builder } from 'xml2js'
-import { query, body, validationResult, param } from 'express-validator'
+import { query, body, validationResult } from 'express-validator'
 import fs from 'fs'
 import sharp from 'sharp'
 import { promisify } from 'util';
@@ -71,7 +71,7 @@ async function createAppClip(options) {
 }
 
 function checkAppClipExist(id) {
-    return fs.existsSync(`appClipsTemplates/${id}.svg`)
+    return fs.existsSync(`appClipsTemplates/a${id}.svg`)
 }
 
 async function calculateAppClips() {
@@ -91,15 +91,12 @@ async function calculateAppClips() {
     ]))[0]?.count || 0
 }
 
-router.get('/generator/status', async (req, res) => {
+async function status() {
     const count = await calculateAppClips()
     const exist = checkAppClipExist((count + 1) || 1)
-    res.json({
-        status: 'online',
-        appclip: exist,
-        qr: true
-    })
-})
+
+    return exist
+}
 
 router.get('/appclip-code',
     query('id').isNumeric(),
@@ -151,75 +148,33 @@ router.get('/appclip-code',
         }
     })
 
-router.post('/generate',
-    body('from').isUUID(),
-    body('to').isUUID(),
-    body('helloText').isString().isLength({ max: 5000 }).optional({ nullable: true }),
-    body('codeVariant').isIn(['qr', 'appclip']),
-    body('asphalt').isBoolean().toBoolean().optional({ nullable: true }),
-    body('serviceRoute').isBoolean().toBoolean().optional({ nullable: true }),
-    body('allowParameterChange').isBoolean().toBoolean().optional({ nullable: true }),
-    async (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+async function generateAppClip(params) {
+    const { from, to, helloText, asphalt, serviceRoute, allowParameterChange } = params
 
-        const { from, to, helloText, codeVariant, asphalt, serviceRoute, allowParameterChange } = req.body
+    const codeID = await calculateAppClips() + 1 || 1
 
-        if (codeVariant == 'appclip') {
-
-            const appClipID = await calculateAppClips() + 1 || 1
-
-            if (!checkAppClipExist(appClipID)) {
-                return res.status(400).json({ error: 'appclip_not_found' })
-            }
-
-            const sharedRoute = new SharedRoute({
-                from: from,
-                to: to,
-                helloText: helloText || "",
-                codeVariant: 'appclip',
-                appClipURL: appClipID,
-                asphalt: asphalt || false,
-                serviceRoute: serviceRoute || false,
-                allowParameterChange: allowParameterChange || false,
-            })
-
-            await sharedRoute.save()
-
-            return res.json({
-                appClipID,
-                base: config.get('baseUrl'),
-                codeUrl: `${config.get('baseUrl')}/l/${appClipID}`
-            })
-        } else {
-
-            return res.status(400).json({ error: 'qr unsupported' })
-        }
-    })
-
-router.get('/load/:id', param('id').exists(), async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+    if (!checkAppClipExist(codeID)) {
+        throw 'appclip_not_found';
     }
 
-    const id = req.params.id
-    let route = await SharedRoute.findOne({ appClipURL: id })
-
-    if (!route) {
-        return res.status(400).json({ error: 'appclip_not_found' })
-    }
-
-    return res.json({
-        from: route.from,
-        to: route.to,
-        helloText: route.helloText,
-        asphalt: route.asphalt,
-        serviceRoute: route.serviceRoute,
-        allowParameterChange: route.allowParameterChange
+    const sharedRoute = new SharedRoute({
+        from: from,
+        to: to,
+        helloText: helloText || "",
+        codeType: 'appclip',
+        codeID: codeID,
+        asphalt: asphalt || false,
+        serviceRoute: serviceRoute || false,
+        allowParameterChange: allowParameterChange || false,
     })
-})
 
-export default router
+    await sharedRoute.save()
+
+    return {
+        codeID: `a${codeID}`,
+        base: config.get('baseUrl'),
+        codeUrl: `${config.get('baseUrl')}/l/a${codeID}`
+    }
+}
+
+export default { router, status, generateAppClip }

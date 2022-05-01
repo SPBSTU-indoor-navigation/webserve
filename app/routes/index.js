@@ -1,9 +1,10 @@
 import Router from 'express'
-import appClip from './appClip.js'
+import shareDialog from './shareDialog/index.js'
+
 
 const router = Router()
 
-router.use('/api', appClip)
+router.use('/api', shareDialog)
 
 router.get('/api', (req, res) => {
     res.json(
@@ -36,4 +37,5 @@ router.get('/.well-known/apple-app-site-association', (req, res) => {
         }
     )
 })
+
 export default router
