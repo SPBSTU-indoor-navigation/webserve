@@ -4,67 +4,78 @@ import config from 'config'
 import sharp from 'sharp'
 import { query, validationResult } from 'express-validator'
 
+import { parseStringPromise, Builder } from 'xml2js'
+import { promisify } from 'util';
+import fs from 'fs'
+
+import { QRCodeStyling } from '../../../qr-code-styling/lib/qr-code-styling.common.js'
+import { JSDOM } from 'jsdom'
+
 const SharedRoute = appDB.model('sharedRoute')
 const router = Router()
 
 async function createQR(options) {
-    const { id, background, primary, logo } = options
+    const { url, background, primary, logo } = options
 
-    // const svg = await promisify(fs.readFile)(`appClipsTemplates/${id}.svg`, 'utf8')
+    const config = {
+        width: 256,
+        height: 256,
+        data: url,
+        dotsOptions: {
+            color: `#${primary}`,
+            type: "rounded"
+        },
+        backgroundOptions: {
+            color: `#${background}`,
+        },
+        cornersSquareOptions: {
+            type: "extra-rounded"
+        },
+        imageOptions: {
+            crossOrigin: "anonymous",
+            margin: 8,
+            imageSize: 0.5
+        }
+    }
 
-    // const res = await parseStringPromise(svg)
-    // res.svg.circle[0].$.style = `fill:#${background}`
-    // res.svg.g[0].g.forEach(g => {
-    //     g.path.forEach(path => {
-    //         path.$.style = path.$.style
-    //             .replace('stroke:#000000', `stroke:#${primary}`)
-    //             .replace('stroke:#888888', `stroke:#${secondary}`)
-    //     })
-    // })
+    if (logo) {
+        config.image = `file:///Users/soprachev/Documents/Projects/PolyMap/WebServe/logoTemplate/icon.svg`
+    }
 
-    // if (logo != 'camera') {
-    //     const logoStr = await promisify(fs.readFile)(`appClipsTemplates/logo_${logo}.svg`, 'utf8')
-    //     const logoSvg = await parseStringPromise(logoStr)
-    //     res.svg.g[1] = logoSvg.g
-    // }
+    const qrCodeSvg = new QRCodeStyling({
+        jsdom: JSDOM,
+        type: "svg",
+        ...config
+    });
 
-    // res.svg.g[1].path.forEach(path => {
-    //     path.$.style = path.$.style
-    //         .replace('#000000', `#${primary}`)
-    //         .replace('#888888', `#${secondary}`)
-    // })
+    const svg = String(await qrCodeSvg.getRawData("svg"))
+    const res = await parseStringPromise(svg)
 
+    if (logo) {
+        const params = res.svg.image[0].$
+        const logoSvg = await parseStringPromise(await promisify(fs.readFile)(`logoTemplate/icon.svg`, 'utf8'))
 
-    // if (useBadge) {
-    //     res.svg.$.viewBox = "-50 -50 900 1100"
-    //     res.svg.circle[0].$.transform = 'translate(-0.99 -3.8)'
+        res.svg.image = undefined
 
-    //     const lockupStr = await promisify(fs.readFile)(`appClipsTemplates/lockup.svg`, 'utf8')
-    //     const lockupSvg = await parseStringPromise(lockupStr)
+        logoSvg.svg.$.width = params.width
+        logoSvg.svg.$.height = params.height
+        logoSvg.svg.$.x = params.x
+        logoSvg.svg.$.y = params.y
 
-    //     lockupSvg.g.path[0].$.style = lockupSvg.g.path[0].$.style.replace('#000000', `#${background}`)
-    //     lockupSvg.g.g[0].$.style = lockupSvg.g.g[0].$.style.replace('#000000', `#${badgeTextColor}`)
+        logoSvg.svg.path[0].$.fill = `#${primary}`
 
-    //     const params = res.svg.g[1].$.transform.split(' ')
-    //     const x = Number.parseFloat(params.shift().split('(')[1])
-    //     const y = Number.parseFloat(params.shift())
+        res.svg.rect[0].$.rx = 25
 
-    //     res.svg.g[1].$.transform = `translate(${x - 0.99} ${y - 3.8}) ${params.join(' ')}`
+        res.svg = {
+            ...res.svg,
+            g: [logoSvg]
+        }
+    }
 
-    //     res.svg = {
-    //         $: res.svg.$,
-    //         title: res.svg.title,
-    //         g: [lockupSvg, {
-    //             circle: res.svg.circle,
-    //             g: res.svg.g
-    //         }],
-    //     }
-    // }
+    var builder = new Builder();
+    var xml = builder.buildObject(res)
 
-    // var builder = new Builder();
-    // var xml = builder.buildObject(res)
-
-    // return xml
+    return xml
 }
 
 router.get('/qr-code',
@@ -83,10 +94,10 @@ router.get('/qr-code',
         }
 
         const svg = await createQR({
-            id: q.id,
+            url: `${config.get('baseUrl')}/l/q${q.id}`,
             background: q.background || 'ffffff',
             primary: q.primary || '000000',
-            logo: q.logo || true
+            logo: q.logo != undefined ? q.logo : true
         })
 
         if (q.type == 'svg') {
@@ -94,7 +105,7 @@ router.get('/qr-code',
             res.type('svg')
             res.send(svg)
         } else {
-            const png = await sharp(Buffer.from(svg))
+            const png = await sharp(Buffer(svg))
                 .resize({ width: q.width || 1024 })
                 .png()
                 .toBuffer()
