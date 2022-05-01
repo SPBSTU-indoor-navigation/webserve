@@ -24,6 +24,7 @@ jobs:
                   port: ${{ secrets.PORT }}
                   script: |
                       cd /home/${{ secrets.USERNAME }}/web/polymap/prod/webserve
+                      git reset --hard @
                       git pull
                       npm i
                       pm2 start pm2/prod.json

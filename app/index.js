@@ -4,7 +4,6 @@ import config from 'config'
 import mongoose from 'mongoose'
 
 import routes from './routes/index.js'
-// import appClip from './routes/appClip.js'
 
 const app = express()
 

@@ -13,7 +13,7 @@ const router = Router()
 async function createAppClip(options) {
     const { id, background, primary, secondary, logo, useBadge, badgeTextColor } = options
 
-    const svg = await promisify(fs.readFile)(`appClipsTemplates/${id}.svg`, 'utf8')
+    const svg = await promisify(fs.readFile)(`appClipsTemplates/a${id}.svg`, 'utf8')
 
     const res = await parseStringPromise(svg)
     res.svg.circle[0].$.style = `fill:#${background}`
