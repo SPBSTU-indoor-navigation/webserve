@@ -171,7 +171,7 @@ async function generateAppClip(params) {
     await sharedRoute.save()
 
     return {
-        codeID: `a${codeID}`,
+        codeID: `${codeID}`,
         base: config.get('baseUrl'),
         codeUrl: `${config.get('baseUrl')}/l/a${codeID}`
     }

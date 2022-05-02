@@ -151,7 +151,7 @@ async function generateQR(params) {
     await sharedRoute.save()
 
     return {
-        codeID: `q${codeID}`,
+        codeID: `${codeID}`,
         base: config.get('baseUrl'),
         codeUrl: `${config.get('baseUrl')}/l/q${codeID}`
     }
