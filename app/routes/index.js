@@ -25,14 +25,20 @@ router.get('/.well-known/apple-app-site-association', (req, res) => {
                         appID: 'LZP5UN7552.com.soprachev.polymap',
                         components: [
                             {
-                                '/': '/l2/*'
+                                '/': '/l/*'
                             },
                             {
-                                '/': '/share/route/*'
+                                '/': '/share/route',
+                                '?': {
+                                    from: '?*',
+                                    to: '?*'
+                                }
                             },
                             {
-                                '/': '/share/annotation/*',
-                                '?': { 'annotation': '*' }
+                                '/': '/share/annotation',
+                                '?': {
+                                    annotation: '?*'
+                                }
                             }
                         ],
                     }
