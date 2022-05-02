@@ -106,7 +106,7 @@ router.get('/qr-code',
             res.type('svg')
             res.send(svg)
         } else {
-            const png = await sharp(Buffer(svg))
+            const png = await sharp(Buffer.from(svg))
                 .resize({ width: q.width || 1024 })
                 .png()
                 .toBuffer()
