@@ -7,6 +7,7 @@ import { query, validationResult } from 'express-validator'
 import { parseStringPromise, Builder } from 'xml2js'
 import { promisify } from 'util';
 import fs from 'fs'
+import path from 'path'
 
 import { QRCodeStyling } from '../../../qr-code-styling/lib/qr-code-styling.common.js'
 import { JSDOM } from 'jsdom'
@@ -39,7 +40,7 @@ async function createQR(options) {
     }
 
     if (logo) {
-        config.image = `file:///Users/soprachev/Documents/Projects/PolyMap/WebServe/logoTemplate/icon.svg`
+        config.image = `file://${path.resolve('./logoTemplate/icon.svg')}`
     }
 
     const qrCodeSvg = new QRCodeStyling({
