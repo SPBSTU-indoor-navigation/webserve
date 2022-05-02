@@ -28,14 +28,10 @@ router.get('/.well-known/apple-app-site-association', (req, res) => {
                                 '/': '/l/*'
                             },
                             {
-                                '/': '/share/route',
-                                '?': {
-                                    'from': '?*',
-                                    'to': '?*'
-                                }
+                                '/': '/share/route'
                             },
                             {
-                                '/': '/share/annotation',
+                                '/': '/share/annotation/*',
                                 '?': { 'annotation': '*' }
                             }
                         ],
