@@ -51,6 +51,7 @@ async function createQR(options) {
 
     const svg = String(await qrCodeSvg.getRawData("svg"))
     const res = await parseStringPromise(svg)
+    res.svg.rect[0].$.rx = 25
 
     if (logo) {
         const params = res.svg.image[0].$
@@ -64,8 +65,6 @@ async function createQR(options) {
         logoSvg.svg.$.y = params.y
 
         logoSvg.svg.path[0].$.fill = `#${primary}`
-
-        res.svg.rect[0].$.rx = 25
 
         res.svg = {
             ...res.svg,
