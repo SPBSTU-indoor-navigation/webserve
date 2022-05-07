@@ -20,6 +20,9 @@ export const SharedRoute = appDB.model("sharedRoute", new mongoose.Schema({
 export const ReportIssueAnnotation = appDB.model("ReportIssueAnnotation", new mongoose.Schema({
     description: String,
     annotation: String,
+    device: {
+        locale: String, modelCode: String, orientation: String, os: String, appVersion: String, screen: String
+    },
     date: Date
 }))
 
@@ -32,6 +35,9 @@ export const ReportIssueRoute = appDB.model("ReportIssueRoute", new mongoose.Sch
             asphalt: Boolean,
             serviceRoute: Boolean,
         }
+    },
+    device: {
+        locale: String, modelCode: String, orientation: String, os: String, appVersion: String, screen: String
     },
     date: Date
 }))

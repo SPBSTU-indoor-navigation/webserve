@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import config from 'config'
 import mongoose from 'mongoose'
+import { bot } from './telegrambot/indes.js'
 
 import routes from './routes/index.js'
 
