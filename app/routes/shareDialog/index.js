@@ -1,10 +1,9 @@
 import Router from 'express'
 import appClip from './appClip.js'
 import qr from './qrCode.js'
-import appDB from '../../db/index.js'
+import { SharedRoute } from '../../db/index.js'
 import { body, validationResult, param } from 'express-validator'
 
-const SharedRoute = appDB.model('sharedRoute')
 const router = Router()
 
 router.use('/', appClip.router)

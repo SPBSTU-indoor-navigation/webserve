@@ -1,5 +1,5 @@
 import Router from 'express'
-import appDB from '../../db/index.js'
+import { SharedRoute } from '../../db/index.js'
 import config from 'config'
 import sharp from 'sharp'
 import { query, validationResult } from 'express-validator'
@@ -12,7 +12,6 @@ import path from 'path'
 import { QRCodeStyling } from '../../../qr-code-styling/lib/qr-code-styling.common.js'
 import { JSDOM } from 'jsdom'
 
-const SharedRoute = appDB.model('sharedRoute')
 const router = Router()
 
 async function createQR(options) {

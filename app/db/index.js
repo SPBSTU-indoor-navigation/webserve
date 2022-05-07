@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const appDB = mongoose.connection.useDb('polymap');
 
-const SharedRoute = new mongoose.Schema({
+export const SharedRoute = appDB.model("sharedRoute", new mongoose.Schema({
     from: String,
     to: String,
     asphalt: Boolean,
@@ -15,9 +15,24 @@ const SharedRoute = new mongoose.Schema({
     },
     helloText: String,
     codeID: String,
-})
+}))
 
+export const ReportIssueAnnotation = appDB.model("ReportIssueAnnotation", new mongoose.Schema({
+    description: String,
+    annotation: String,
+    date: Date
+}))
 
-appDB.model("sharedRoute", SharedRoute);
+export const ReportIssueRoute = appDB.model("ReportIssueRoute", new mongoose.Schema({
+    description: String,
+    route: {
+        from: String,
+        to: String,
+        params: {
+            asphalt: Boolean,
+            serviceRoute: Boolean,
+        }
+    },
+    date: Date
+}))
 
-export default appDB

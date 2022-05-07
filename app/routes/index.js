@@ -1,10 +1,12 @@
 import Router from 'express'
 import shareDialog from './shareDialog/index.js'
+import report from './reportIssue/index.js'
 
 
 const router = Router()
 
 router.use('/api', shareDialog)
+router.use('/api/report', report)
 
 router.get('/api', (req, res) => {
     res.json(

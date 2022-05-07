@@ -1,5 +1,5 @@
 import Router from 'express'
-import appDB from '../../db/index.js'
+import { SharedRoute } from '../../db/index.js'
 import { parseStringPromise, Builder } from 'xml2js'
 import { query, body, validationResult } from 'express-validator'
 import fs from 'fs'
@@ -7,7 +7,6 @@ import sharp from 'sharp'
 import { promisify } from 'util';
 import config from 'config'
 
-const SharedRoute = appDB.model('sharedRoute')
 const router = Router()
 
 async function createAppClip(options) {
